@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Js;
-use App\Repositories\ProductRepository;
 
 class UserController extends Controller
 {
