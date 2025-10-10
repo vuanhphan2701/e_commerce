@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Repositories\ProductRepositoryInterface;
+use App\Repositories\ProductRepository;
 
 class ProductController extends Controller
 {
     protected $productRepository;
 
     // inject repository
-    public function __construct(ProductRepositoryInterface $productRepository)
+    public function __construct(ProductRepository $productRepository)
     {
         $this->productRepository = $productRepository;
     }
