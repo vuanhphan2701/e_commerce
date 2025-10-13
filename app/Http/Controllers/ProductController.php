@@ -4,69 +4,60 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\ProductRepository;
+use Core\Response;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 
 class ProductController extends Controller
 {
+    /**
+     * Product Repository
+     */
     protected $productRepository;
 
-    // inject repository
-    public function __construct(ProductRepository $productRepository)
+    public function __construct()
     {
-        $this->productRepository = $productRepository;
+        $this->productRepository = resolve(ProductRepository::class);
     }
 
-    // Get all products
     public function index()
     {
         $products = $this->productRepository->getAll();
-        return response()->json($products);
+        return Response::success($products);
     }
 
-    // Get a product by ID
     public function show($id)
     {
         $product = $this->productRepository->findById($id);
 
         if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+            return Response::error('Product not found', 404);
         }
 
-        return response()->json($product);
+        return Response::success($product);
     }
 
-    // Create new product
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-        ]);
+        $validated = $request->validated();
 
         $product = $this->productRepository->create($validated);
 
-        return response()->json([
-            'message' => 'Product created successfully',
-            'product' => $product
-        ], 201);
+        return Response::success($product, 'Product created successfully', 201);
+
     }
 
-    // Update product
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
-        $product = $this->productRepository->update($id, $request->all());
+        $product = $this->productRepository->update($id, $request->validated());
 
-        return response()->json([
-            'message' => 'Product updated successfully',
-            'product' => $product
-        ]);
+        return Response::success($product, 'Product updated successfully');
     }
 
-    // Delete product
     public function destroy($id)
     {
         $this->productRepository->delete($id);
 
-        return response()->json(['message' => 'Product deleted successfully']);
+        return Response::success(null, 'Product deleted successfully');
     }
 }

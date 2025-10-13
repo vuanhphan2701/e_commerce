@@ -3,15 +3,17 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Faker\Provider\Base;
 use Illuminate\Support\Facades\Hash;
-
-class UserRepository
+use Core\Repositories\BaseRepository;
+class UserRepository extends BaseRepository
 {
+    protected $model = User::class;
 
     // Tạo user mới
     public function createUser(array $data)
     {
-        return User::create([
+        return $this->model::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
@@ -22,7 +24,7 @@ class UserRepository
     // Tìm user theo email
     public function findByEmail(string $email)
     {
-        return User::where('email', $email)->first();
+        return $this->model::where('email', $email)->first();
     }
 
 
