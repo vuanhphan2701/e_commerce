@@ -17,7 +17,15 @@ Route::get('/products/{id}', [ProductController::class, 'show']);
 
 // Các route cần xác thực
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/products', [ProductController::class, 'store']);
-    Route::put('/products/{id}', [ProductController::class, 'update']);
-    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+    // Thêm sản phẩm — cần quyền create_product
+    Route::post('/products', [ProductController::class, 'store'])
+        ->middleware('permission:create_product');
+
+    // Cập nhật sản phẩm — cần quyền update_product
+    Route::put('/products/{id}', [ProductController::class, 'update'])
+        ->middleware('permission:update_product');
+
+    // Xoá sản phẩm — chỉ admin được phép
+    Route::delete('/products/{id}', [ProductController::class, 'destroy'])
+        ->middleware(['role:admin', 'permission:delete_product']);
 });
